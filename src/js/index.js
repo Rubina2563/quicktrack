@@ -14,7 +14,7 @@ const timeSpentData = initializeTimeSpentData();
         return timeSpentData;
     }
 const render=() => {
-    
+    localStorage.removeItem('timeSpentData');
     // Initialize time spent data for the last 7 days
 //
     // Task form
