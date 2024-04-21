@@ -15,9 +15,7 @@ const timeSpentData = initializeTimeSpentData();
     }
 const render=() => {
     localStorage.removeItem('timeSpentData');
-    // Initialize time spent data for the last 7 days
-//
-    // Task form
+
     const input = document.querySelector('#task-input');
     const list_el = document.querySelector('#tasks');
 
@@ -32,12 +30,12 @@ const render=() => {
             return;
         }
 
-        // Create task element
+       
         const task_el = document.createElement('div');
         task_el.classList.add('task');
         list_el.appendChild(task_el);
 
-        // Content
+        
         const content_el = document.createElement('div');
         content_el.classList.add('content');
         task_el.appendChild(content_el);
@@ -49,7 +47,6 @@ const render=() => {
         input_el.setAttribute('readonly', 'readonly');
         content_el.appendChild(input_el);
 
-        // Counter
         const counter_el = document.createElement('div');
         counter_el.classList.add('counter');
         task_el.appendChild(counter_el);
@@ -67,7 +64,7 @@ const render=() => {
         controls_el.classList.add('controls');
         counter_el.appendChild(controls_el);
 
-        // Add buttons elements to controls
+    
         const start_btn = document.createElement('button');
         start_btn.classList.add('start');
         start_btn.innerText = "Start";
@@ -78,7 +75,7 @@ const render=() => {
         stop_btn.innerText = "Stop";
         controls_el.appendChild(stop_btn);
 
-        // Actions
+        
         const actions_el = document.createElement('div');
         actions_el.classList.add('actions');
         task_el.appendChild(actions_el);
@@ -88,10 +85,10 @@ const render=() => {
         delete_btn.innerText = "Delete Task";
         actions_el.appendChild(delete_btn);
 
-        // Input value
+        
         input.value = "";
 
-        // Counter
+        
         let seconds = 0;
         let interval = null;
         let startTime = null; // Initialize startTime for each task
@@ -99,12 +96,12 @@ const render=() => {
         start_btn.addEventListener('click', () => start(task_el));
         stop_btn.addEventListener('click', () => stop(task_el));
 
-        // Capitalize first letter
+        
         function capitalize(str) {
             return str[0].toUpperCase() + str.slice(1);
         }
 
-        // Counter functions
+        
         function timer() {
             seconds++;
 
@@ -139,12 +136,12 @@ const render=() => {
             console.log(timeSpentData);
         }
 
-        // Delete task
+       
         delete_btn.addEventListener('click', () => {
             list_el.removeChild(task_el);
         });
 
-        // For timestamps
+        
         function displayTimestamps(startTime, endTime) {
             const startTimestamp = formatTimestamp(startTime);
             const endTimestamp = formatTimestamp(endTime);
@@ -170,28 +167,26 @@ const render=() => {
         }
     });
 
-     //calculating total time spent
+    
     function calculateTotalTime(startTime, endTime) {
-    // Convert start and end time to Date objects
+    
     const start = new Date(`2000-01-01T${startTime}`);
     const end = new Date(`2000-01-01T${endTime}`);
 
-    // Calculate the difference in milliseconds
        
     let timeDiff = end.getTime() - start.getTime();
 
-    // Adjust for crossing midnight
+    
     if (timeDiff < 0) {
-        // Add a day (24 hours) to the end time
         end.setDate(end.getDate() + 1);
         timeDiff = end.getTime() - start.getTime();
     }
-    // Convert milliseconds to hours, minutes, and seconds
+    
     const totalHours = Math.floor(timeDiff / (1000 * 60 * 60));
     const totalMinutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
     const totalSeconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
 
-    // Format the total time
+    
     const formattedTotalTime = `${totalHours}:${totalMinutes}:${totalSeconds}`;
 
     return formattedTotalTime;
@@ -199,23 +194,21 @@ const render=() => {
     
    function spentDataHr(startTime, endTime, index) { 
         
-      const start = new Date(`2000-01-01T${startTime}`);
+    const start = new Date(`2000-01-01T${startTime}`);
     const end = new Date(`2000-01-01T${endTime}`);
 
-    // Calculate the difference in milliseconds
-        let timeDiff = end.getTime() - start.getTime();
+    
+    let timeDiff = end.getTime() - start.getTime();
 
-    // Adjust for crossing midnight
+    
     if (timeDiff < 0) {
-        // Add a day (24 hours) to the end time
+        
         end.setDate(end.getDate() + 1);
         timeDiff = end.getTime() - start.getTime();
     }
   
          const totalHours = Math.floor(timeDiff / (1000 * 60 * 60));
     
-      
-
         timeSpentData[index].totalHours += totalHours;
     }
 
@@ -257,19 +250,16 @@ const render=() => {
         taskDateInput.classList.add('date-inputs');
         timeInputsDiv.appendChild(taskDateInput);
 
-        //calculating total time
-
         const addButton = document.createElement('button');
-        addButton.type = 'button'; // Change type to 'button' to prevent form submission
-        addButton.classList.add('add-button'); // Add class for styling
+        addButton.type = 'button'; 
+        addButton.classList.add('add-button'); 
         addButton.textContent = 'Add';
         addButton.addEventListener('click', () => {
             const startTime = startTimeSelectHour.value + ':' + startTimeSelectMin.value;
             const endTime = endTimeSelectHour.value + ':' + endTimeSelectMin.value;
             const taskDate = taskDateInput.value;
 
-            const date = new Date(taskDate); // Parse the date string into a Date object
-    // Get the day index (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+            const date = new Date(taskDate);
             console.log("Day index:", date.getDay());
             const index = date.getDay();
             
@@ -277,7 +267,7 @@ const render=() => {
                 const totalTime = calculateTotalTime(startTime, endTime);
                 const newTask = createNewTask(taskDescription, startTime, endTime, totalTime, taskDate);
                 manualTrackerForm.replaceWith(newTask);
-                //  updateLast7DaysData(startTime, endTime); // Update last 7 days data
+
                 spentDataHr(startTime, endTime, index);
                  localStorage.setItem('timeSpentData', JSON.stringify(timeSpentData));
                  console.log(timeSpentData); 
@@ -364,26 +354,26 @@ const render=() => {
             
             timeSpentData[index].totalHours += totalHours;
         }
-     // For testing
+    
     }
 
     function calculateTotalHours(startTime, endTime) {
-        // Convert start and end time to Date objects
+       
         const start = new Date(`2000-01-01T${startTime}`);
         const end = new Date(`2000-01-01T${endTime}`);
 
-        // Calculate the difference in milliseconds
+        
          let timeDiff = end.getTime() - start.getTime();
 
-    // Adjust for crossing midnight
+   
     if (timeDiff < 0) {
-        // Add a day (24 hours) to the end time
+        
         end.setDate(end.getDate() + 1);
         timeDiff = end.getTime() - start.getTime();
-    }   // Convert milliseconds to hours
+    }  
         return timeDiff / (1000 * 60 * 60);
     }
-    // Save timeSpentData to local storage
+    
     
  
 
@@ -391,10 +381,10 @@ const render=() => {
 };
  
 
-// Call the render function
+
 const renderedData = render();
 
-// Log the rendered data
-console.log(renderedData);
+
+
 
   
