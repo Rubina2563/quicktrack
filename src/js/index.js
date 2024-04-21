@@ -1,18 +1,30 @@
-let timeSpentData;
+const timeSpentData = initializeTimeSpentData();
 
-window.addEventListener('load', () => {
+    function initializeTimeSpentData() {
+        const today = new Date();
+        const timeSpentData = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            timeSpentData.push({
+                date: date.toLocaleDateString(),
+                totalHours: 0
+            });
+        }
+        return timeSpentData;
+    }
+const render=() => {
     
     // Initialize time spent data for the last 7 days
-    timeSpentData = initializeTimeSpentData();
-
+//
     // Task form
     const input = document.querySelector('#task-input');
     const list_el = document.querySelector('#tasks');
 
     const timeTrackerButton = document.querySelector('.time-tracker-button');
-    timeTrackerButton.addEventListener('click', (e) => {
-        e.preventDefault();
 
+    timeTrackerButton.addEventListener('click',(e) => {
+        e.preventDefault();
         const task = capitalize(input.value);
 
         if (!task) {
@@ -123,7 +135,8 @@ window.addEventListener('load', () => {
             interval = null;
             displayTimestamps(startTime, endTime); // Pass startTime and endTime to displayTimestamps
             updateLast7DaysData(startTime, endTime); // Update last 7 days data
-             console.log(timeSpentData);
+             localStorage.setItem('timeSpentData', JSON.stringify(timeSpentData));
+            console.log(timeSpentData);
         }
 
         // Delete task
@@ -265,7 +278,8 @@ window.addEventListener('load', () => {
                 const newTask = createNewTask(taskDescription, startTime, endTime, totalTime, taskDate);
                 manualTrackerForm.replaceWith(newTask);
                 //  updateLast7DaysData(startTime, endTime); // Update last 7 days data
-              spentDataHr(startTime, endTime ,index);
+                spentDataHr(startTime, endTime, index);
+                 localStorage.setItem('timeSpentData', JSON.stringify(timeSpentData));
                  console.log(timeSpentData); 
             } else {
                 alert("Please fill in all fields.");
@@ -369,12 +383,18 @@ window.addEventListener('load', () => {
     }   // Convert milliseconds to hours
         return timeDiff / (1000 * 60 * 60);
     }
+    // Save timeSpentData to local storage
+    
  
-});
 
+    return timeSpentData;
+};
+ 
 
+// Call the render function
+const renderedData = render();
 
-
-
+// Log the rendered data
+console.log(renderedData);
 
   
