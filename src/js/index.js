@@ -1,6 +1,9 @@
+let timeSpentData;
+
 window.addEventListener('load', () => {
-   
-   
+    
+    // Initialize time spent data for the last 7 days
+    timeSpentData = initializeTimeSpentData();
 
     // Task form
     const input = document.querySelector('#task-input');
@@ -119,6 +122,8 @@ window.addEventListener('load', () => {
             clearInterval(interval);
             interval = null;
             displayTimestamps(startTime, endTime); // Pass startTime and endTime to displayTimestamps
+            updateLast7DaysData(startTime, endTime); // Update last 7 days data
+             console.log(timeSpentData);
         }
 
         // Delete task
@@ -140,16 +145,34 @@ window.addEventListener('load', () => {
         }
     });
 
+    const manualTrackerButton = document.querySelector('.manual-tracker-button');
+    manualTrackerButton.addEventListener('click', () => {
+        const taskDescription = input.value.trim();
+        if (taskDescription !== '') {
+            input.value = "";
+            const manualTrackerForm = createManualTrackerForm(taskDescription);
+            list_el.appendChild(manualTrackerForm);
+        } else {
+            alert("Please enter a task description first.");
+        }
+    });
 
-    //calculating total time spent
+     //calculating total time spent
     function calculateTotalTime(startTime, endTime) {
     // Convert start and end time to Date objects
     const start = new Date(`2000-01-01T${startTime}`);
     const end = new Date(`2000-01-01T${endTime}`);
 
     // Calculate the difference in milliseconds
-    const timeDiff = end.getTime() - start.getTime();
+       
+    let timeDiff = end.getTime() - start.getTime();
 
+    // Adjust for crossing midnight
+    if (timeDiff < 0) {
+        // Add a day (24 hours) to the end time
+        end.setDate(end.getDate() + 1);
+        timeDiff = end.getTime() - start.getTime();
+    }
     // Convert milliseconds to hours, minutes, and seconds
     const totalHours = Math.floor(timeDiff / (1000 * 60 * 60));
     const totalMinutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
@@ -159,20 +182,29 @@ window.addEventListener('load', () => {
     const formattedTotalTime = `${totalHours}:${totalMinutes}:${totalSeconds}`;
 
     return formattedTotalTime;
-}
+    }
+    
+   function spentDataHr(startTime, endTime, index) { 
+        
+      const start = new Date(`2000-01-01T${startTime}`);
+    const end = new Date(`2000-01-01T${endTime}`);
 
+    // Calculate the difference in milliseconds
+        let timeDiff = end.getTime() - start.getTime();
 
-    const manualTrackerButton = document.querySelector('.manual-tracker-button');
-    manualTrackerButton.addEventListener('click', () => {
-        const taskDescription = input.value.trim();
-        if (taskDescription !== '') {
-            const manualTrackerForm = createManualTrackerForm(taskDescription);
-           
-            list_el.appendChild(manualTrackerForm);
-        } else {
-            alert("Please enter a task description first.");
-        }
-    });
+    // Adjust for crossing midnight
+    if (timeDiff < 0) {
+        // Add a day (24 hours) to the end time
+        end.setDate(end.getDate() + 1);
+        timeDiff = end.getTime() - start.getTime();
+    }
+  
+         const totalHours = Math.floor(timeDiff / (1000 * 60 * 60));
+    
+      
+
+        timeSpentData[index].totalHours += totalHours;
+    }
 
     function createManualTrackerForm(taskDescription) {
         const manualTrackerForm = document.createElement('div');
@@ -213,7 +245,6 @@ window.addEventListener('load', () => {
         timeInputsDiv.appendChild(taskDateInput);
 
         //calculating total time
-        
 
         const addButton = document.createElement('button');
         addButton.type = 'button'; // Change type to 'button' to prevent form submission
@@ -223,10 +254,19 @@ window.addEventListener('load', () => {
             const startTime = startTimeSelectHour.value + ':' + startTimeSelectMin.value;
             const endTime = endTimeSelectHour.value + ':' + endTimeSelectMin.value;
             const taskDate = taskDateInput.value;
+
+            const date = new Date(taskDate); // Parse the date string into a Date object
+    // Get the day index (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+            console.log("Day index:", date.getDay());
+            const index = date.getDay();
+            
             if (taskDate && startTime && endTime) {
                 const totalTime = calculateTotalTime(startTime, endTime);
                 const newTask = createNewTask(taskDescription, startTime, endTime, totalTime, taskDate);
                 manualTrackerForm.replaceWith(newTask);
+                //  updateLast7DaysData(startTime, endTime); // Update last 7 days data
+              spentDataHr(startTime, endTime ,index);
+                 console.log(timeSpentData); 
             } else {
                 alert("Please fill in all fields.");
             }
@@ -281,4 +321,60 @@ window.addEventListener('load', () => {
         }
         return select;
     }
+
+    function initializeTimeSpentData() {
+        const today = new Date();
+        const timeSpentData = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            timeSpentData.push({
+                date: date.toLocaleDateString(),
+                totalHours: 0
+            });
+        }
+        return timeSpentData;
+    }
+
+    function updateLast7DaysData(startTime, endTime) {
+        const today = new Date();
+        const diffInDays = Math.floor((today - startTime) / (1000 * 60 * 60 * 24));
+        if (diffInDays < 7) {
+            const index = 6 - diffInDays;
+            let totalHours = calculateTotalHours(startTime, endTime);
+            if (totalHours !== Number) {
+                totalHours = 1;
+            }
+            console.log(totalHours)
+            
+            
+            timeSpentData[index].totalHours += totalHours;
+        }
+     // For testing
+    }
+
+    function calculateTotalHours(startTime, endTime) {
+        // Convert start and end time to Date objects
+        const start = new Date(`2000-01-01T${startTime}`);
+        const end = new Date(`2000-01-01T${endTime}`);
+
+        // Calculate the difference in milliseconds
+         let timeDiff = end.getTime() - start.getTime();
+
+    // Adjust for crossing midnight
+    if (timeDiff < 0) {
+        // Add a day (24 hours) to the end time
+        end.setDate(end.getDate() + 1);
+        timeDiff = end.getTime() - start.getTime();
+    }   // Convert milliseconds to hours
+        return timeDiff / (1000 * 60 * 60);
+    }
+ 
 });
+
+
+
+
+
+
+  

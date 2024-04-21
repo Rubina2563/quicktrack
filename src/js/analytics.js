@@ -1,9 +1,10 @@
 // Get the canvas element
+
 var ctx = document.getElementById('timeChart').getContext('2d');
 
 // Sample data for demonstration (you'll replace this with actual data)
 var timeSpentData = [3, 5, 7, 6, 4, 8, 5]; // Time spent on tasks for each day of the week
-
+con
 // Prepare data for the chart
 var data = {
   labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
