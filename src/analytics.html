@@ -7,8 +7,9 @@
     <title>Analytics</title>
     <!-- Include Chart.js library -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
     <style>
-        body {
+        .chart-div {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             padding: 20px;
@@ -30,11 +31,12 @@
 </head>
 
 <body>
+    <div class="chart-div">
     <div class="analytics-content">
         <h1>Weekly Time Analytics</h1>
         <canvas id="timeChart" width="400" height="200"></canvas>
     </div>
-
+</div>
     <!-- Script to populate and render the chart -->
    
     <script src="./js/analytics.js" type="module" ></script>
