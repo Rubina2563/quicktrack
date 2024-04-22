@@ -27,7 +27,7 @@ const render=() => {
 
         if (!task) {
             alert("Please add a task");
-            return;
+            
         }
 
        
@@ -344,7 +344,7 @@ const render=() => {
         const today = new Date();
         const diffInDays = Math.floor((today - startTime) / (1000 * 60 * 60 * 24));
         if (diffInDays < 7) {
-            const index = 6 - diffInDays;
+            const index = diffInDays+1;
             let totalHours = calculateTotalHours(startTime, endTime);
             if (totalHours !== Number) {
                 totalHours = 1;
